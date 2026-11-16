@@ -1,0 +1,2 @@
+# What the checks need on top of requirements.txt. CMake and Ninja are in requirements-build.txt.
+pytest==9.1.1

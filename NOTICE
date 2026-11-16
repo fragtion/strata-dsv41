@@ -1,0 +1,31 @@
+strata-dsv41
+
+This repository is a trimmed copy of Strata (https://github.com/Niko1221/Strata) at commit
+13eedf552 (2026-11-11), the last upstream commit with the DeepSeek-V4.1-Flash engine. Upstream
+removed DeepSeek in Strata 0.2.14.
+
+Strata
+  Copyright (c) 2026 Niko1221 and the Strata contributors
+  MIT License (LICENSE)
+  The engine (src/dsv41, include/strata/dsv41), the CPU kernels, the Metal runtime, the server
+  (serve/), the tools and the tests are upstream's. The engine source is unchanged. The build
+  files, the server's model handling and this repository's documentation were changed to leave
+  out everything that was not DeepSeek-V4.1-Flash.
+
+Project Maya (maya-ds4)
+  Copyright (c) 2026 Peasant Smith (mw00) and the Project Maya contributors, including needmorevram
+  MIT License
+  The DeepSeek engine is ported from it. See third_party/project-maya/NOTICE.md.
+
+antirez/ds4
+  MIT License
+  The Metal form of the DeepSeek-V4.1 vision tower follows it. See third_party/antirez-ds4/NOTICE.md.
+
+ggml / llama.cpp
+  Copyright (c) the ggml authors
+  MIT License
+  Vendored in third_party/strata-ggml (see UPSTREAM.md there) and third_party/ggml.
+
+Model weights
+  DeepSeek-V4.1-Flash is DeepSeek's model, published as GGUF by ISTA-DASLab and Unsloth under
+  their own licences. No model file is part of this repository.

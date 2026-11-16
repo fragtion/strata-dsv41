@@ -1,0 +1,28 @@
+# build output
+build*/
+/engine-dsv41/
+*.log
+*.nsys-rep
+
+# Python
+/.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# local run configs and start scripts (README: Running the server)
+/run-*.bat
+/run-*.sh
+/strata-*.json
+
+# the conversation slots the server keeps beside its log
+/ds4-slots/
+
+# models and packs, if kept in the checkout
+/models/
+/packs/
+
+# IDEs
+.vscode/
+.idea/
+.cursor/
