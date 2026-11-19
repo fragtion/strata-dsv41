@@ -32,7 +32,7 @@ only DeepSeek.
 | Engine version | **0.1.59.1** (`strata-dsv41 --version` prints `strata-dsv41 0.1.59.1 build <commit>`) |
 | Last upstream DeepSeek packages | 0.1.59 ([upstream release v0.2.13](https://github.com/Niko1221/Strata/releases/tag/v0.2.13)) |
 
-The engine source (`src/dsv41`, `include/strata/dsv41`) is upstream's at that commit, unchanged. What changed here is
+The engine source (`engine/src/dsv41`, `engine/include/strata/dsv41`) is upstream's at that commit, unchanged. What changed here is
 what was cut around it: the build files, the server's Qwen paths, and the files nothing used any more. See
 [NOTICE](NOTICE) for the full list of sources.
 
@@ -41,10 +41,10 @@ All of the engine and server work is upstream's and Project Maya's:
 - **Strata**, MIT, Copyright (c) 2026 Niko1221 and the Strata contributors ([LICENSE](LICENSE)). This repository's
   changes are under the same licence.
 - **Project Maya** (`maya-ds4`, by mw00, with needmorevram and the Project Maya contributors), MIT: the DeepSeek engine
-  is ported from it ([third_party/project-maya](third_party/project-maya/NOTICE.md)).
-- **antirez/ds4**, MIT: the Metal form of the vision tower follows it ([third_party/antirez-ds4](third_party/antirez-ds4/NOTICE.md)).
-- **ggml / llama.cpp**, MIT, the ggml authors: vendored in [third_party/strata-ggml](third_party/strata-ggml/UPSTREAM.md)
-  and [third_party/ggml](third_party/ggml/LICENSE).
+  is ported from it ([engine/third_party/project-maya](engine/third_party/project-maya/NOTICE.md)).
+- **antirez/ds4**, MIT: the Metal form of the vision tower follows it ([engine/third_party/antirez-ds4](engine/third_party/antirez-ds4/NOTICE.md)).
+- **ggml / llama.cpp**, MIT, the ggml authors: vendored in [engine/third_party/strata-ggml](engine/third_party/strata-ggml/UPSTREAM.md)
+  and [engine/third_party/ggml](engine/third_party/ggml/LICENSE).
 - **The model weights** are DeepSeek's, published as GGUF by ISTA-DASLab and Unsloth under their own licences. No model
   file is in this repository.
 
@@ -55,7 +55,7 @@ All of the engine and server work is upstream's and Project Maya's:
 | Windows, NVIDIA (CUDA 13) | `build-dsv41.bat` | **built and run** |
 | Linux, NVIDIA (CUDA 13) | CMake, [below](#building-the-engine) | untested; upstream released packages for it |
 | AMD (HIP: gfx1100-1102, gfx1151, gfx1200/1201) | CMake with `-DSTRATA_ENABLE_HIP=ON` | **untested**: the CMake files were rewritten for this repository |
-| macOS, Apple Silicon (Metal) | [`metal/CMakeLists.txt`](metal/CMakeLists.txt), target `strata_ds4` | **untested**: the Metal CMake was rewritten for this repository |
+| macOS, Apple Silicon (Metal) | [`engine/metal/CMakeLists.txt`](engine/metal/CMakeLists.txt), target `strata_ds4` | **untested**: the Metal CMake was rewritten for this repository |
 
 Upstream ran the HIP engine on Radeon AI PRO R9700 cards and Strix Halo, and the Metal engine on an M5 Max. The source of
 those engines is unchanged, but their build files here have never been run. If you build one of them, please open an issue
@@ -80,7 +80,7 @@ Needs:
 git clone https://github.com/fragtion/strata-dsv41
 cd strata-dsv41
 py -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-build.txt
+.venv\Scripts\python.exe -m pip install -r terminal\requirements.txt -r terminal\requirements-build.txt
 set DSV41_ARCH=86-real
 build-dsv41.bat
 ```
@@ -114,24 +114,24 @@ set DSV41_ARCH=86-real & build-dsv41.bat
 ### By hand (Windows or Linux, NVIDIA)
 
 ```sh
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSTRATA_ENABLE_CUDA=ON -DSTRATA_PORTABLE=ON "-DCMAKE_CUDA_ARCHITECTURES=86-real"
+cmake -S engine -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSTRATA_ENABLE_CUDA=ON -DSTRATA_PORTABLE=ON "-DCMAKE_CUDA_ARCHITECTURES=86-real"
 cmake --build build --target strata-dsv41
 ```
 
 ### AMD (HIP), untested
 
 ```sh
-cmake -S . -B build-hip -G Ninja -DCMAKE_BUILD_TYPE=Release -DSTRATA_ENABLE_HIP=ON -DSTRATA_PORTABLE=ON -DCMAKE_HIP_ARCHITECTURES=gfx1201
+cmake -S engine -B build-hip -G Ninja -DCMAKE_BUILD_TYPE=Release -DSTRATA_ENABLE_HIP=ON -DSTRATA_PORTABLE=ON -DCMAKE_HIP_ARCHITECTURES=gfx1201
 cmake --build build-hip --target strata-dsv41
 ```
 
-Needs ROCm with hipBLAS. Upstream's scripts, adapted to this build, are `tools/dsv41/build_hip_linux.sh` (Linux) and
-`tools\dsv41\win\build_hip_win.bat` (Windows, ROCm from TheRock's wheels). `cmake/hip_backend.cmake` has the options.
+Needs ROCm with hipBLAS. Upstream's scripts, adapted to this build, are `terminal/tools/dsv41/build_hip_linux.sh` (Linux) and
+`terminal\tools\dsv41\win\build_hip_win.bat` (Windows, ROCm from TheRock's wheels). `engine/cmake/hip_backend.cmake` has the options.
 
 ### Mac (Metal), untested
 
 ```sh
-cmake -S metal -B build-metal -G Ninja -DCMAKE_BUILD_TYPE=Release -DMETAL_CPP_DIR=/path/to/metal-cpp
+cmake -S engine/metal -B build-metal -G Ninja -DCMAKE_BUILD_TYPE=Release -DMETAL_CPP_DIR=/path/to/metal-cpp
 cmake --build build-metal --target strata_ds4
 ```
 
@@ -144,15 +144,15 @@ Needs Xcode's command line tools and Apple's [metal-cpp](https://developer.apple
 | `STRATA_ENABLE_CUDA` | OFF | build for NVIDIA |
 | `STRATA_ENABLE_HIP` | OFF | build for AMD |
 | `STRATA_PORTABLE` | OFF | a CPU lane that runs on any AVX2 CPU instead of only the build machine's (use it for a build you copy elsewhere) |
-| `STRATA_BUILD_TESTS` | OFF | also build the tests in `tests/dsv41` |
+| `STRATA_BUILD_TESTS` | OFF | also build the tests in `engine/tests/dsv41` |
 
 With neither CUDA nor HIP, only the CPU lane's benchmark (`ds4_gg_bench`) is built. The vendored ggml in
-`third_party/strata-ggml` is used; nothing is downloaded.
+`engine/third_party/strata-ggml` is used; nothing is downloaded.
 
 ### Tests
 
 ```sh
-cmake -S . -B build-tests -G Ninja -DCMAKE_BUILD_TYPE=Release -DSTRATA_ENABLE_CUDA=ON -DSTRATA_BUILD_TESTS=ON "-DCMAKE_CUDA_ARCHITECTURES=86-real"
+cmake -S engine -B build-tests -G Ninja -DCMAKE_BUILD_TYPE=Release -DSTRATA_ENABLE_CUDA=ON -DSTRATA_BUILD_TESTS=ON "-DCMAKE_CUDA_ARCHITECTURES=86-real"
 cmake --build build-tests
 ctest --test-dir build-tests
 ```
@@ -161,8 +161,8 @@ ctest --test-dir build-tests
 without a GPU:
 
 ```sh
-python -m pip install -r requirements-dev.txt
-python -m pytest serve
+python -m pip install -r terminal/requirements-dev.txt
+python -m pytest terminal/serve
 ```
 
 ## Models and packs
@@ -177,7 +177,7 @@ The model files stay where they are.
 | IQ1_M, 1.75 bpw | [ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF) | 239 GB | 0.217; weaker on prose |
 | IQ2_XXS, 2.00 bpw | the same | 257 GB | 0.170 |
 | IQ2_XS, 2.25 bpw | the same | 274 GB | 0.107 |
-| Coder (192 of 384 experts a layer) | [ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF](https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF) | 191 GB | for code; file list and hashes in [data/dsv41/coder-set.json](data/dsv41/coder-set.json) |
+| Coder (192 of 384 experts a layer) | [ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF](https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF) | 191 GB | for code; file list and hashes in [terminal/data/dsv41/coder-set.json](terminal/data/dsv41/coder-set.json) |
 | UD-Q8_K_XL | [unsloth/DeepSeek-V4.1-Flash-1017-GGUF](https://huggingface.co/unsloth/DeepSeek-V4.1-Flash-1017-GGUF) | 508 GB | for several cards and hundreds of GB of RAM |
 
 The KL numbers are upstream's (4,995 positions). The download sizes include files every set shares, which you download
@@ -198,14 +198,14 @@ ISTA-DASLab's sets come in two layouts: four shards (`...-0000N-of-00004.gguf`) 
 The official sets, with the shared files in `SHARED`:
 
 ```bat
-.venv\Scripts\python.exe tools\dsv41\pack_gguf.py --model SETDIR --shards <the set's shard files> ^
+.venv\Scripts\python.exe terminal\tools\dsv41\pack_gguf.py --model SETDIR --shards <the set's shard files> ^
   --engram SHARED\DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf ^
   --engram-meta <metadata shard> ^
   --dspark-gguf SHARED\dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf ^
   --dspark-noise-token 128799 --dspark-markov-rank 256 ^
   --mmproj SHARED\mmproj-BF16.gguf ^
   --out PACK
-copy data\dsv41\profile-2.25.bin PACK\expert-profile.bin
+copy terminal\data\dsv41\profile-2.25.bin PACK\expert-profile.bin
 ```
 
 - **`--engram-meta`.** For a four-shard set, Unsloth's 6 MB first shard. For a six-shard set (and the Coder), the set's
@@ -247,7 +247,7 @@ root out of git, so you can keep them there.
 ```
 
 ```bat
-.venv\Scripts\python.exe serve\server.py --engine strata --config strata-deepseek-v4.1-flash.json --port 8080 --open
+.venv\Scripts\python.exe terminal\serve\server.py --engine strata --config strata-deepseek-v4.1-flash.json --port 8080 --open
 ```
 
 `--port` sets the port (the default is 8095; the config has no port key). `--open` opens the chat page in the browser.
@@ -284,7 +284,7 @@ For the Coder with pictures, add `"--vision", "on", "--reserve-mib", "900"` to `
 - **Context.** A prompt that does not fit the context gets a 400; it is never cut. When the prompt fits but the prompt
   plus `max_tokens` does not, `max_tokens` is shortened to the room left (`"fit_max_tokens": false` turns that off).
 
-`python serve/server.py --help` lists the server's own options.
+`python terminal/serve/server.py --help` lists the server's own options.
 
 ## Settings
 
@@ -313,7 +313,7 @@ elevated prompt.
 
 ### `DS4_*` environment settings
 
-The engine reads more than 100 `DS4_*` variables (Project Maya's names; `grep getenv\(\"DS4_ src/dsv41`). Most are for
+The engine reads more than 100 `DS4_*` variables (Project Maya's names; `grep getenv\(\"DS4_ engine/src/dsv41`). Most are for
 measuring and debugging. The ones worth knowing:
 
 | Variable | What it does |
@@ -350,12 +350,12 @@ research switches.
 
 | What | How |
 |---|---|
-| Does the pack answer? | `python tools\dsv41\smoke.py --exe <strata-dsv41> --pack <pack>`: 16 tokens through the engine, and the reply must name Paris. Stop the server first |
-| Short tune | `python tools\dsv41\tune.py --config <run config> [--mode quick\|thorough]`. It runs the engine a few times on a fixed question and tries `--dspark on`, `--dspark-block 3` and the CPU thread count. It keeps a setting only for a gain over 5% and writes it into the config's `args`. About 5 to 10 minutes |
+| Does the pack answer? | `python terminal\tools\dsv41\smoke.py --exe <strata-dsv41> --pack <pack>`: 16 tokens through the engine, and the reply must name Paris. Stop the server first |
+| Short tune | `python terminal\tools\dsv41\tune.py --config <run config> [--mode quick\|thorough]`. It runs the engine a few times on a fixed question and tries `--dspark on`, `--dspark-block 3` and the CPU thread count. It keeps a setting only for a gain over 5% and writes it into the config's `args`. About 5 to 10 minutes |
 | Answer speed | the response's `timings.predicted_per_second`, or `/metrics` (`decode_tok_s`) |
-| Pack and conversion tools | `tools\dsv41\`: `pack_gguf.py`, `vision_pack.py`, `drafter_pack.py`, `ista_intake.py`, `pin_coder.py`, `requant_gguf.py`, `dense_requant.py`, `tq_convert.py` (trellis experts, see `tools\trellis\README.md`) |
-| Reference and compare | `tools\dsv41\`: `ref.py`, `ref_gguf.py`, `compare.py`, `dumpcmp.py`, `dumpscan*.py`, `dspark_ref.py`, `make_imatrix.py`, `engram_*.py` |
-| Kernel experiments | `tools\dsv41_lab\` |
+| Pack and conversion tools | `terminal\tools\dsv41\`: `pack_gguf.py`, `vision_pack.py`, `drafter_pack.py`, `ista_intake.py`, `pin_coder.py`, `requant_gguf.py`, `dense_requant.py`, `tq_convert.py` (trellis experts, see `terminal\tools\trellis\README.md`) |
+| Reference and compare | `terminal\tools\dsv41\`: `ref.py`, `ref_gguf.py`, `compare.py`, `dumpcmp.py`, `dumpscan*.py`, `dspark_ref.py`, `make_imatrix.py`, `engram_*.py` |
+| Kernel experiments | `terminal\tools\dsv41_lab\` |
 
 ## Slots and restore points
 
@@ -378,7 +378,7 @@ With a pack made with `--mmproj` and `--vision on`, the engine reads pictures wi
 - **Memory.** The tower waits in pinned RAM (about 1 GB). It takes its 319 MiB of VRAM only while it reads a picture, from
   the room `--reserve-mib` keeps free. Use `--reserve-mib 900` with pictures on.
 - **No free VRAM.** The last expert slots are lent to the tower for that turn and read back afterwards.
-- **Picture size.** The server (`serve/ds_pictures.py`, needs Pillow) scales each picture so both sides are multiples of
+- **Picture size.** The server (`terminal/serve/ds_pictures.py`, needs Pillow) scales each picture so both sides are multiples of
   42, at most 1024 image tokens. JPEG, PNG, BMP, GIF, WebP, TIFF and AVIF work.
 - **Off.** With `--vision off`, or a pack without the tower, a request with a picture gets a 400 that says so.
   `--vision-resident` keeps the tower on the card.
@@ -416,16 +416,22 @@ shrink the RAM store (upstream #4147). This engine has the fix. With an older on
 
 ## Repository layout
 
+The folders follow upstream Strata's 0.2.16 layout.
+
 | Path | What it is |
 |---|---|
-| `src/dsv41`, `include/strata/dsv41` | the engine |
-| `src/kernels/cpu`, `include/strata/kernels/cpu`, `src/platform`, `include/strata/platform` | the CPU lane's kernels and the thread pool |
-| `src/prefill/wmma_gemm.cu`, `src/core/device.cu` | two shared files the HIP build needs |
-| `metal/` | the Metal build |
-| `serve/` | the server and its tests |
-| `strata_control/` | small helpers the server uses (paths, processes, GPU roles) |
-| `tools/dsv41`, `tools/trellis`, `tools/dsv41_lab`, `tools/strata_tokenizer.py` | pack, conversion, reference and test tools |
-| `tests/dsv41` | the engine's tests |
-| `data/dsv41` | the hot-expert profiles and the Coder's file list |
-| `third_party/` | vendored ggml and the credits |
-| `cmake/` | the CMake parts |
+| `engine/` | everything CMake builds: `CMakeLists.txt`, `cmake/`, `src/`, `include/`, `metal/`, `third_party/` and the C++ tests |
+| `engine/src/dsv41`, `engine/include/strata/dsv41` | the engine |
+| `engine/src/kernels/cpu`, `engine/include/strata/kernels/cpu`, `engine/src/platform`, `engine/include/strata/platform` | the CPU lane's kernels and the thread pool |
+| `engine/src/prefill/wmma_gemm.cu`, `engine/src/core/device.cu` | two shared files the HIP build needs |
+| `engine/metal/` | the Metal build |
+| `engine/tests/dsv41` | the engine's tests |
+| `engine/third_party/` | vendored ggml and the credits |
+| `terminal/` | the Python side: the server, its helpers, the tools, the data and the requirements |
+| `terminal/serve/` | the server and its tests |
+| `terminal/strata_control/` | small helpers the server uses (paths, processes, GPU roles) |
+| `terminal/tools/dsv41`, `terminal/tools/trellis`, `terminal/tools/dsv41_lab`, `terminal/tools/strata_tokenizer.py` | pack, conversion, reference and test tools |
+| `terminal/data/dsv41` | the hot-expert profiles and the Coder's file list |
+| `docs/` | the pages |
+| `.github/SECURITY.md` | how to report a security problem |
+| `build-dsv41.bat` | the Windows build |

@@ -5,19 +5,19 @@ This repository is the DeepSeek-V4.1-Flash engine (`strata-dsv41`) and its serve
 
 ## Layout
 
-- `src/dsv41`, `include/strata/dsv41`: the engine. Upstream's source, unchanged; keep it that way unless a change is the
+- `engine/src/dsv41`, `engine/include/strata/dsv41`: the engine. Upstream's source, unchanged; keep it that way unless a change is the
   point of the work.
-- `CMakeLists.txt`, `cmake/`: the build (CUDA or HIP; `metal/CMakeLists.txt` for Apple Silicon).
-- `serve/`: the OpenAI- and Anthropic-compatible server. It accepts only `"arch": "deepseek41"` configs.
-- `strata_control/`: small helpers the server imports.
-- `tools/dsv41`: packing, conversion, smoke test and tuner.
+- `engine/`: everything CMake builds (`cmake -S engine`; CUDA or HIP; `engine/metal/CMakeLists.txt` for Apple Silicon).
+- `terminal/serve/`: the OpenAI- and Anthropic-compatible server. It accepts only `"arch": "deepseek41"` configs.
+- `terminal/strata_control/`: small helpers the server imports.
+- `terminal/tools/dsv41`: packing, conversion, smoke test and tuner.
 
 ## Checks
 
-- Server tests, no GPU needed: `python -m pytest serve`.
+- Server tests, no GPU needed: `python -m pytest terminal/serve`.
 - Engine tests: configure with `-DSTRATA_BUILD_TESTS=ON`, then `ctest` for the host-side tests. `ds4_tq_test` and
   `ds4_iq_test` need a GPU.
-- A change to the engine or its build: rebuild (`build-dsv41.bat` on Windows) and run `tools/dsv41/smoke.py` against a
+- A change to the engine or its build: rebuild (`build-dsv41.bat` on Windows) and run `terminal/tools/dsv41/smoke.py` against a
   pack.
 
 ## What is verified

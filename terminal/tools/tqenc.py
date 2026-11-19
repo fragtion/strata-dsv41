@@ -39,7 +39,7 @@ def lib() -> ctypes.CDLL:
     global _lib
     if _lib is None:
         cands = [os.environ.get("TQENC_LIB", ""),
-                 str(pathlib.Path(__file__).resolve().parent.parent / "build-tqenc" / "libtqenc.so"),
+                 str(pathlib.Path(__file__).resolve().parents[2] / "build-tqenc" / "libtqenc.so"),
                  "libtqenc.so"]
         last = None
         for c in cands:
@@ -115,7 +115,7 @@ def hip_lib() -> ctypes.CDLL:
     global _hip
     if _hip is None:
         cands = [os.environ.get("TQENC_HIP_LIB", ""),
-                 str(pathlib.Path(__file__).resolve().parent.parent / "build-tqenc" / "libtqenc_hip.so")]
+                 str(pathlib.Path(__file__).resolve().parents[2] / "build-tqenc" / "libtqenc_hip.so")]
         last = None
         for c in cands:
             if not c:

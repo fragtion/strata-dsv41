@@ -4,7 +4,7 @@
 // router 384 / 6, Engram rows 256 (FP8 + E8M0).  References are plain double-precision C++ written from the kernels' documented
 // math (DeepSeek model.py), not from the kernels.
 //   ds4_lab [--tokens 1,2,3,4,5] [--only name,name] [--ctx 8192] [--reps 100]
-#include "../../src/dsv41/ds4_kernels.cuh"
+#include "../../../engine/src/dsv41/ds4_kernels.cuh"
 #include "attn_split.cuh"
 
 #include <algorithm>

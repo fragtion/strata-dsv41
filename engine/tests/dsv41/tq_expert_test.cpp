@@ -5,7 +5,7 @@
 //   tq_expert_test [--type 145,146,...]
 #include "../../src/dsv41/ds4_gguf_cpu.hpp"
 #include "../../src/dsv41/ds4_iq.cuh"
-#include "../../tools/trellis/tqenc.hpp"
+#include "../../../terminal/tools/trellis/tqenc.hpp"
 
 #include "strata/dsv41/hip_or_cuda.h"   // HIP names on a HIP build, the CUDA runtime otherwise
 

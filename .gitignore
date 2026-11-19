@@ -4,6 +4,11 @@ build*/
 *.log
 *.nsys-rep
 
+# temp folders a test run leaves when TEMP points at the checkout
+/tmp*/
+/terminal/tmp*/
+strata-pytest-config-*/
+
 # Python
 /.venv/
 __pycache__/

@@ -15,7 +15,7 @@ Supported: the latest commit on `main`.
 
 ## What the server exposes
 
-The server (`serve/server.py`) serves the model over HTTP. Out of the box it is reachable from this PC only.
+The server (`terminal/serve/server.py`) serves the model over HTTP. Out of the box it is reachable from this PC only.
 
 - **Where it listens.** `127.0.0.1` by default. `--host 0.0.0.0` (or `"host"` in the run config) opens it to
   your network, and the server then warns when no API key is set.

@@ -9,7 +9,7 @@ rem   STRATA_HIP_ARCHS   gfx1151 (also gfx1100;gfx1201 ...)      ROCM_VENV   <re
 rem   BUILD_DIR          <repo>\build-dsv41-hip
 rem   JOBS               parallel compile jobs (default 6)
 setlocal EnableDelayedExpansion
-for %%I in ("%~dp0..\..\..") do set "SRC=%%~fI"
+for %%I in ("%~dp0..\..\..\..") do set "SRC=%%~fI"
 if not defined STRATA_HIP_ARCHS set "STRATA_HIP_ARCHS=gfx1151"
 if not defined ROCM_VENV set "ROCM_VENV=%SRC%\.rocm-win"
 if not defined BUILD_DIR set "BUILD_DIR=%SRC%\build-dsv41-hip"
@@ -30,7 +30,7 @@ set "HIP_PATH=%ROCM%"
 set "ROCM_PATH=%ROCM%"
 set "PATH=%ROCM%\bin;%ROCM%\lib\llvm\bin;%PATH%"
 if not exist "%BUILD_DIR%\build.ninja" (
-  cmake -G Ninja -S "%SRC%" -B "%BUILD_DIR%" -DCMAKE_BUILD_TYPE=Release ^
+  cmake -G Ninja -S "%SRC%\engine" -B "%BUILD_DIR%" -DCMAKE_BUILD_TYPE=Release ^
     -DSTRATA_ENABLE_HIP=ON -DSTRATA_ENABLE_CUDA=OFF -DSTRATA_BUILD_TESTS=ON ^
     -DSTRATA_PORTABLE=ON "-DCMAKE_HIP_ARCHITECTURES=%STRATA_HIP_ARCHS%" ^
     "-DCMAKE_C_COMPILER=%ROCM_F%/lib/llvm/bin/clang.exe" "-DCMAKE_CXX_COMPILER=%ROCM_F%/lib/llvm/bin/clang++.exe" ^

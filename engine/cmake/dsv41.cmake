@@ -112,10 +112,10 @@ macro(strata_dsv41_tests)
   # Both test .cpp files launch kernels, so they compile as HIP on AMD and as CUDA on NVIDIA.
   set_source_files_properties(tests/dsv41/tq_expert_test.cpp PROPERTIES LANGUAGE ${_ds4_test_lang})
   add_executable(ds4_tq_test tests/dsv41/tq_expert_test.cpp src/dsv41/ds4_tq.cu src/dsv41/ds4_iq.cu src/dsv41/ds4_tq_cpu.cpp
-                 src/dsv41/ds4_iq_cpu.cpp src/dsv41/ds4_gg_cpu.cpp tools/trellis/tqenc.cpp)
+                 src/dsv41/ds4_iq_cpu.cpp src/dsv41/ds4_gg_cpu.cpp ../terminal/tools/trellis/tqenc.cpp)
   # the same with the plain-FMA tile instead of the gfx12 WMMA one (what CUDA and gfx11 builds run)
   add_executable(ds4_tq_test_portable tests/dsv41/tq_expert_test.cpp src/dsv41/ds4_tq.cu src/dsv41/ds4_iq.cu src/dsv41/ds4_tq_cpu.cpp
-                 src/dsv41/ds4_iq_cpu.cpp src/dsv41/ds4_gg_cpu.cpp tools/trellis/tqenc.cpp)
+                 src/dsv41/ds4_iq_cpu.cpp src/dsv41/ds4_gg_cpu.cpp ../terminal/tools/trellis/tqenc.cpp)
   target_compile_definitions(ds4_tq_test_portable PRIVATE DS4_TQ_PORTABLE=1)
   # the i-quant experts (ds4_iq.cu) against ggml's own decode of the same blocks and a double reference, device and CPU lane
   set_source_files_properties(tests/dsv41/iq_expert_test.cpp PROPERTIES LANGUAGE ${_ds4_test_lang})

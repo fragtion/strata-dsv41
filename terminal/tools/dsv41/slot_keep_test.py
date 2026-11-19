@@ -44,7 +44,8 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent.parent
+ROOT = HERE.parent.parent            # terminal/
+REPO = ROOT.parent                   # the checkout
 META_MAGIC = 0x324154454D345344   # "DS4META2" (little endian): a slot's .meta, as src/dsv41/ds4_slotmeta.hpp writes it
 
 
@@ -52,7 +53,7 @@ META_MAGIC = 0x324154454D345344   # "DS4META2" (little endian): a slot's .meta, 
 def corpus_text() -> str:
     """Real text for the prompts: the repo's README and docs, in a fixed order."""
     parts = []
-    for p in [ROOT / "README.md", *sorted((ROOT / "docs").glob("*.md"))]:
+    for p in [REPO / "README.md", *sorted((REPO / "docs").glob("*.md"))]:
         try:
             parts.append(p.read_text(encoding="utf-8"))
         except OSError:
@@ -282,7 +283,7 @@ def run(exe: str, pack: str, engine_args: list[str], slots: str, keep: bool, ste
 def main() -> int:
     ap = argparse.ArgumentParser(description="the kept conversations: two agents taking turns on one model")
     ap.add_argument("--pack", required=True)
-    ap.add_argument("--exe", default=str(ROOT / "build" / "strata-dsv41"))
+    ap.add_argument("--exe", default=str(REPO / "build-dsv41" / "strata-dsv41"))
     ap.add_argument("--ids-dir", default="", help="the prompts' .ids files (made from the docs when missing)")
     ap.add_argument("--make-only", action="store_true", help="write the .ids files and stop")
     ap.add_argument("--engine-args", default="", help="more engine flags, e.g. '--vram-experts 0 --max-context 20000'")

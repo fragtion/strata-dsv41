@@ -4,8 +4,8 @@
 // computed code when TQE_CODE=3single, with --code 1) against the kernel's y, relative to sum|w x| per output.
 // --bench: the DeepSeek decode shape (12 gate/up matrices of 2304 x 5120), GB/s of weight bytes.
 #include "../../src/dsv41/ds4_tqw.cuh"
-#include "../../tools/dsv41_lab/wmma_emu.hpp"
-#include "../../tools/trellis/tqenc.hpp"
+#include "../../../terminal/tools/dsv41_lab/wmma_emu.hpp"
+#include "../../../terminal/tools/trellis/tqenc.hpp"
 
 #include <algorithm>
 #include <chrono>

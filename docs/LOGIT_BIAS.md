@@ -45,8 +45,9 @@ The `model` value above is the test server's alias; use your server's model name
 Numeric pair values are also supported, for example `[[42, 2.5]]`.
 Token IDs belong to the loaded model's tokenizer; the example ID is not portable
 between arbitrary models. Leading spaces and letter case can also change token IDs.
-The four English requests were measured on ISTA IQ3_XXS; a
-[reproduction script](../tools/logit_bias_english_example.py) is included.
+The four English requests were measured upstream on a Qwen ISTA IQ3_XXS pack, so the token IDs above are Qwen's. Upstream's
+[reproduction script](https://github.com/Niko1221/Strata/blob/13eedf552/tools/logit_bias_english_example.py) is not part of
+this repository.
 
 ## Semantics and limits
 

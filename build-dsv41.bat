@@ -6,8 +6,8 @@ rem   set DSV41_ARCH=86-real & build-dsv41.bat          only your card's code (f
 rem
 rem Needs: Visual Studio 2022 (any edition, or the Build Tools) with the C++ workload, the CUDA 13.0 toolkit, CMake 3.24+ and
 rem Ninja. CMake and Ninja are taken from this folder's .venv when they are there
-rem (python -m pip install -r requirements-build.txt), otherwise from PATH.
-rem llama.cpp's ggml is vendored in third_party\strata-ggml, so nothing is downloaded and STRATA_GGML_DIR is not needed.
+rem (python -m pip install -r terminal\requirements-build.txt), otherwise from PATH.
+rem llama.cpp's ggml is vendored in engine\third_party\strata-ggml, so nothing is downloaded and STRATA_GGML_DIR is not needed.
 rem
 rem Settings (all optional):
 rem   DSV41_ARCH   CUDA architectures, default "86-real;89-real;120" (upstream's release set: SASS for sm_86/89/120, PTX for 120)
@@ -29,7 +29,7 @@ set "CMAKE=cmake"
 set "NINJA=ninja"
 if exist "%ROOT%\.venv\Scripts\cmake.exe" set "CMAKE=%ROOT%\.venv\Scripts\cmake.exe"
 if exist "%ROOT%\.venv\Scripts\ninja.exe" set "NINJA=%ROOT%\.venv\Scripts\ninja.exe"
-"%CMAKE%" --version >nul 2>&1 || ( echo   CMake not found: python -m pip install -r requirements-build.txt into .venv, or put cmake on PATH & exit /b 2 )
+"%CMAKE%" --version >nul 2>&1 || ( echo   CMake not found: python -m pip install -r terminal\requirements-build.txt into .venv, or put cmake on PATH & exit /b 2 )
 
 rem Visual Studio 2022's C++ environment (vswhere finds any edition and the Build Tools)
 set "VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -45,7 +45,7 @@ set "TEMP=%BD%\tmp"
 set "TMP=%BD%\tmp"
 
 rem configure every time: the build id (the git commit) is baked in at configure time
-"%CMAKE%" -G Ninja "-DCMAKE_MAKE_PROGRAM=%NINJA%" -S "%ROOT%" -B "%BD%" -DCMAKE_BUILD_TYPE=Release ^
+"%CMAKE%" -G Ninja "-DCMAKE_MAKE_PROGRAM=%NINJA%" -S "%ROOT%\engine" -B "%BD%" -DCMAKE_BUILD_TYPE=Release ^
   -DSTRATA_ENABLE_CUDA=ON -DSTRATA_BUILD_TESTS=OFF -DSTRATA_PORTABLE=ON ^
   "-DCMAKE_CUDA_ARCHITECTURES=%DSV41_ARCH%" "-DCMAKE_CUDA_COMPILER=%CUDA_ROOT%\bin\nvcc.exe" "-DCUDAToolkit_ROOT=%CUDA_ROOT%" || goto :fail
 if exist "%BD%\strata-dsv41.exe" del /q "%BD%\strata-dsv41.exe"
